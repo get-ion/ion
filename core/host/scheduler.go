@@ -65,6 +65,19 @@ func (s *Scheduler) ScheduleFunc(runner func(TaskProcess)) TaskCancelFunc {
 	return s.Schedule(TaskRunnerFunc(runner))
 }
 
+// OnInterrupt registers an interrupt handler
+// but unlike `Schedule(host.OnInterrupt(...))` it does not
+// receive any arguments, use it whenever you want to fire a
+// callback when server goes off and you don't need
+// access to the underline host,
+// otherwise use `Schedule(host.OnInterrupt(func (proc host.TaskProcess)))`,
+// which gives full access, instead.
+func (s *Scheduler) OnInterrupt(cb func()) {
+	s.Schedule(OnInterrupt(func(proc TaskProcess) {
+		cb()
+	}))
+}
+
 func cancelTasks(tasks []*task) {
 	for _, t := range tasks {
 		if atomic.LoadInt32(&t.alreadyCanceled) != 0 {

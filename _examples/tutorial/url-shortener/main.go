@@ -8,30 +8,40 @@ package main
 import (
 	"bytes"
 	"html/template"
-	"math/rand"
 	"net/url"
-	"time"
-
-	"github.com/boltdb/bolt"
 
 	"github.com/get-ion/ion"
 	"github.com/get-ion/ion/context"
 	"github.com/get-ion/ion/view"
+
+	"github.com/boltdb/bolt"
+
+	"github.com/satori/go.uuid"
 )
 
 func main() {
-	// app := ion.New()
-	app := ion.Default()
-
-	// assign a variable to the DB so we can use its features later
+	// assign a variable to the DB so we can use its features later.
 	db := NewDB("shortener.db")
+	// Pass that db to our app, in order to be able to test the whole app with a different database later on.
+	app := newApp(db)
+
+	// release the "db" connection when server goes off.
+	app.Scheduler.OnInterrupt(db.Close)
+	app.Run(ion.Addr(":8080"))
+}
+
+func newApp(db *DB) *ion.Application {
+	app := ion.Default() // or app := ion.New()
+
+	// create our factory, which is the manager for the object creation.
+	// between our web app and the db.
 	factory := NewFactory(DefaultGenerator, db)
 
 	// serve the "./templates" directory's "*.html" files with the HTML std view engine.
 	tmpl := view.HTML("./templates", ".html").Reload(true)
-	// template funcs
+	// register any template func(s) here.
 	//
-	// look ./templates/index.html#L16
+	// Look ./templates/index.html#L16
 	tmpl.AddFunc("IsPositive", func(n int) bool {
 		if n > 0 {
 			return true
@@ -67,7 +77,7 @@ func main() {
 
 		ctx.Redirect(value, ion.StatusTemporaryRedirect)
 	}
-	app.Get("/u/:shortkey", func(ctx context.Context) {
+	app.Get("/u/{shortkey}", func(ctx context.Context) {
 		execShortURL(ctx, ctx.Params().Get("shortkey"))
 	})
 
@@ -75,14 +85,17 @@ func main() {
 		formValue := ctx.FormValue("url")
 		if formValue == "" {
 			ctx.ViewData("FORM_RESULT", "You need to a enter a URL")
+			ctx.StatusCode(ion.StatusLengthRequired)
 		} else {
 			key, err := factory.Gen(formValue)
 			if err != nil {
 				ctx.ViewData("FORM_RESULT", "Invalid URL")
+				ctx.StatusCode(ion.StatusBadRequest)
 			} else {
 				if err = db.Set(key, formValue); err != nil {
 					ctx.ViewData("FORM_RESULT", "Internal error while saving the URL")
 					app.Logger().Infof("while saving URL: " + err.Error())
+					ctx.StatusCode(ion.StatusInternalServerError)
 				} else {
 					ctx.StatusCode(ion.StatusOK)
 					shortenURL := "http://" + app.ConfigurationReadOnly().GetVHost() + "/u/" + key
@@ -101,9 +114,7 @@ func main() {
 		ctx.Redirect("/")
 	})
 
-	app.Run(ion.Addr(":8080"))
-
-	db.Close()
+	return app
 }
 
 //  +------------------------------------------------------------+
@@ -123,7 +134,7 @@ type Store interface {
 	Set(key string, value string) error // error if something went wrong
 	Get(key string) string              // empty value if not found
 	Len() int                           // should return the number of all the records/tables/buckets
-	Close() error                       // release the store or ignore
+	Close()                             // release the store or ignore
 }
 
 var (
@@ -189,8 +200,8 @@ func (d *DB) Set(key string, value string) error {
 		if err != nil {
 			return err
 		}
-
-		return b.Put([]byte(key), []byte(value))
+		k := []byte(key)
+		return b.Put(k, []byte(value))
 	})
 }
 
@@ -225,6 +236,27 @@ func (d *DB) Get(key string) (value string) {
 	return
 }
 
+// GetByValue returns all keys for a specific (original) url value.
+func (d *DB) GetByValue(value string) (keys []string) {
+	valueB := []byte(value)
+	d.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(tableURLs)
+		if b == nil {
+			return nil
+		}
+		c := b.Cursor()
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			if bytes.Equal(valueB, v) {
+				keys = append(keys, string(k))
+			}
+		}
+
+		return nil
+	})
+
+	return
+}
+
 // Len returns all the "shorted" urls length
 func (d *DB) Len() (num int) {
 	d.db.View(func(tx *bolt.Tx) error {
@@ -244,9 +276,11 @@ func (d *DB) Len() (num int) {
 	return
 }
 
-// Close the data(base) connection
-func (d *DB) Close() error {
-	return d.db.Close()
+// Close shutdowns the data(base) connection.
+func (d *DB) Close() {
+	if err := d.db.Close(); err != nil {
+		Panic(err)
+	}
 }
 
 //  +------------------------------------------------------------+
@@ -255,11 +289,13 @@ func (d *DB) Close() error {
 //  |                                                            |
 //  +------------------------------------------------------------+
 
-// Generator the type to generate keys(short urls) based on 'n'
-type Generator func(n int) string
+// Generator the type to generate keys(short urls)
+type Generator func() string
 
-// DefaultGenerator is the defautl url generator (the simple randomString)
-var DefaultGenerator = randomString
+// DefaultGenerator is the defautl url generator
+var DefaultGenerator = func() string {
+	return uuid.NewV4().String()
+}
 
 // Factory is responsible to generate keys(short urls)
 type Factory struct {
@@ -284,40 +320,15 @@ func (f *Factory) Gen(uri string) (key string, err error) {
 	if err != nil {
 		return "", err
 	}
-	key = f.generator(len(uri))
+
+	key = f.generator()
 	// Make sure that the key is unique
 	for {
 		if v := f.store.Get(key); v == "" {
 			break
 		}
-		key = f.generator((len(uri) / 2) + 1)
+		key = f.generator()
 	}
 
 	return key, nil
-}
-
-const (
-	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	letterIdxBits = 6                    // 6 bits to represent a letter index
-	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-)
-
-func randomString(n int) string {
-	src := rand.NewSource(time.Now().UnixNano())
-	b := make([]byte, n)
-	// A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
-		}
-		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
-			b[i] = letterBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
-	}
-
-	return string(b)
 }
