@@ -1,0 +1,16 @@
+language: go
+os:
+  - linux
+  - osx
+go:
+  - go1.8
+  - tip
+go_import_path: github.com/get-ion/ion
+install:
+  - go get ./... # for get-ion/httpexpect
+script:
+  - go test -v -cover ./...
+after_script:
+  - cd ./_examples
+  - go get ./...
+  - go test -v -cover ./...
