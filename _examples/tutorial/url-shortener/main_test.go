@@ -42,12 +42,11 @@ func TestURLShortener(t *testing.T) {
 		WithFormField("url", originalURL).Expect().
 		Status(httptest.StatusOK).Body().Contains("<pre><a target='_new' href=")
 	keys2 := db.GetByValue(originalURL)
-	if got := len(keys2); got != 2 {
-		t.Fatalf("expected to have 2 keys even if we save the same original url but saved %d short urls", got)
-	} // useful to count the times the same url is provided
-	// but the key is the same, so only the first one matters.
+	if got := len(keys2); got != 1 {
+		t.Fatalf("expected to have 1 keys even if we save the same original url but saved %d short urls", got)
+	} // the key is the same, so only the first one matters.
 
-	if keys[0] == keys2[0] {
+	if keys[0] != keys2[0] {
 		t.Fatalf("expected keys to be equal if the original url is the same, but got %s = %s ", keys[0], keys2[0])
 	}
 

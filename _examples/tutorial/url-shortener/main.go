@@ -28,6 +28,7 @@ func main() {
 	// release the "db" connection when server goes off.
 	app.Scheduler.OnInterrupt(db.Close)
 	app.Run(ion.Addr(":8080"))
+
 }
 
 func newApp(db *DB) *ion.Application {
@@ -200,7 +201,23 @@ func (d *DB) Set(key string, value string) error {
 		if err != nil {
 			return err
 		}
+
 		k := []byte(key)
+		valueB := []byte(value)
+		c := b.Cursor()
+
+		found := false
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			if bytes.Equal(valueB, v) {
+				found = true
+				break
+			}
+		}
+		// if value already exists don't re-put it.
+		if found {
+			return nil
+		}
+
 		return b.Put(k, []byte(value))
 	})
 }
@@ -216,7 +233,7 @@ func (d *DB) Clear() error {
 //
 // Returns an empty string if not found.
 func (d *DB) Get(key string) (value string) {
-	keyb := []byte(key)
+	keyB := []byte(key)
 	d.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(tableURLs)
 		if b == nil {
@@ -224,7 +241,7 @@ func (d *DB) Get(key string) (value string) {
 		}
 		c := b.Cursor()
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			if bytes.Equal(keyb, k) {
+			if bytes.Equal(keyB, k) {
 				value = string(v)
 				break
 			}
@@ -245,6 +262,7 @@ func (d *DB) GetByValue(value string) (keys []string) {
 			return nil
 		}
 		c := b.Cursor()
+		// first for the bucket's table "urls"
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			if bytes.Equal(valueB, v) {
 				keys = append(keys, string(k))
