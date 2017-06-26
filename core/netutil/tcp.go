@@ -1,4 +1,4 @@
-package nettools
+package netutil
 
 import (
 	"crypto/tls"

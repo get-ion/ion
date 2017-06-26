@@ -6,7 +6,7 @@ package host
 // supervisor.
 import (
 	"context"
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 	"net/http"
 )
 
@@ -65,12 +65,12 @@ func (h TaskHost) Serve() error {
 // HostURL returns the listening full url (scheme+host)
 // based on the supervisor's server's address.
 func (h TaskHost) HostURL() string {
-	return nettools.ResolveURLFromServer(h.su.server)
+	return netutil.ResolveURLFromServer(h.su.server)
 }
 
 // Hostname returns the underline server's hostname.
 func (h TaskHost) Hostname() string {
-	return nettools.ResolveHostname(h.su.server.Addr)
+	return netutil.ResolveHostname(h.su.server.Addr)
 }
 
 // Shutdown gracefully shuts down the server without interrupting any

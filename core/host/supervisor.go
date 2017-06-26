@@ -12,7 +12,7 @@ import (
 	"syscall"
 
 	"github.com/get-ion/ion/core/errors"
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 	"golang.org/x/crypto/acme/autocert"
 )
 
@@ -113,13 +113,11 @@ func (su *Supervisor) notifyErr(err error) {
 	su.Scheduler.notifyErr(err)
 }
 
-/// TODO:
 // Remove all channels, do it with events
 // or with channels but with a different channel on each task proc
 // I don't know channels are not so safe, when go func and race risk..
 // so better with callbacks....
 func (su *Supervisor) supervise(blockFunc func() error) error {
-	// println("Running Serve from Supervisor")
 
 	// su.server: in order to Serve and Shutdown the underline server and no re-run the supervisors when .Shutdown -> .Serve.
 	// su.GetBlocker: set the Block() and Unblock(), which are checked after a shutdown or error.
@@ -174,12 +172,12 @@ func (su *Supervisor) newListener() (net.Listener, error) {
 	// restarts we may want for the server.
 	//
 	// User still be able to call .Serve instead.
-	l, err := nettools.TCPKeepAlive(su.server.Addr)
+	l, err := netutil.TCPKeepAlive(su.server.Addr)
 	if err != nil {
 		return nil, err
 	}
 
-	if nettools.IsTLS(su.server) {
+	if netutil.IsTLS(su.server) {
 		// means tls
 		tlsl := tls.NewListener(l, su.server.TLSConfig)
 		return tlsl, nil

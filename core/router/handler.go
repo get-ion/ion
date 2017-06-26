@@ -9,7 +9,7 @@ import (
 	"github.com/get-ion/ion/context"
 
 	"github.com/get-ion/ion/core/errors"
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 	"github.com/get-ion/ion/core/router/node"
 )
 
@@ -143,7 +143,7 @@ func (h *routerHandler) HandleRequest(ctx context.Context) {
 
 		if h.hosts && t.Subdomain != "" {
 			requestHost := ctx.Host()
-			if nettools.IsLoopbackSubdomain(requestHost) {
+			if netutil.IsLoopbackSubdomain(requestHost) {
 				// this fixes a bug when listening on
 				// 127.0.0.1:8080 for example
 				// and have a wildcard subdomain and a route registered to root domain.

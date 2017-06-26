@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 )
 
 const (
@@ -155,7 +155,7 @@ func WithHost(host string) RoutePathReverserOption {
 	return func(ps *RoutePathReverser) {
 		ps.vhost = host
 		if ps.vscheme == "" {
-			ps.vscheme = nettools.ResolveScheme(host)
+			ps.vscheme = netutil.ResolveScheme(host)
 		}
 	}
 }
@@ -165,8 +165,8 @@ func WithHost(host string) RoutePathReverserOption {
 // a scheme and a host to be used in the URL function.
 func WithServer(srv *http.Server) RoutePathReverserOption {
 	return func(ps *RoutePathReverser) {
-		ps.vhost = nettools.ResolveVHost(srv.Addr)
-		ps.vscheme = nettools.ResolveSchemeFromServer(srv)
+		ps.vhost = netutil.ResolveVHost(srv.Addr)
+		ps.vscheme = netutil.ResolveSchemeFromServer(srv)
 	}
 }
 

@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 )
 
 func singleJoiningSlash(a, b string) string {
@@ -48,7 +48,7 @@ func ProxyHandler(target *url.URL) *httputil.ReverseProxy {
 	}
 	p := &httputil.ReverseProxy{Director: director}
 
-	if nettools.IsLoopbackHost(target.Host) {
+	if netutil.IsLoopbackHost(target.Host) {
 		transport := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}

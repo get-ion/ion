@@ -10,7 +10,7 @@ import (
 	"github.com/get-ion/ion/context"
 	"github.com/get-ion/ion/core/handlerconv"
 	"github.com/get-ion/ion/core/host"
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 )
 
 // ToHandler converts native http.Handler & http.HandlerFunc to context.Handler.
@@ -58,7 +58,7 @@ func (app *Application) Listen(addr string) {
 //
 // Deprecated. Use `Run` instead.
 func (app *Application) ListenUNIX(socketFile string, mode os.FileMode) {
-	l, err := nettools.UNIX(socketFile, mode)
+	l, err := netutil.UNIX(socketFile, mode)
 	CheckErr(err)
 
 	CheckErr(app.Run(Listener(l)))
@@ -85,10 +85,10 @@ func (app *Application) ListenTLS(addr string, certFile, keyFile string) {
 //
 // Deprecated. Use `Run` instead.
 func (app *Application) ListenLETSENCRYPT(addr string, cacheDirOptional ...string) {
-	l, err := nettools.LETSENCRYPT(addr, addr, cacheDirOptional...)
+	l, err := netutil.LETSENCRYPT(addr, addr, cacheDirOptional...)
 	CheckErr(err)
 	// create the redirect server to redirect http://... to https://...
-	hostname := nettools.ResolveHostname(addr)
+	hostname := netutil.ResolveHostname(addr)
 	proxyAddr := hostname + ":80"
 	target, err := url.Parse("https://" + hostname)
 	CheckErr(err)

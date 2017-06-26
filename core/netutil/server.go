@@ -1,4 +1,4 @@
-package nettools
+package netutil
 
 import (
 	"net/http"

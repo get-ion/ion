@@ -19,7 +19,9 @@ It doesn't always contain the "best ways" but it does cover each important featu
 - [UNIX socket file](http-listening/listen-unix/main.go)
 - [TLS](http-listening/listen-tls/main.go)
 - [Letsencrypt (Automatic Certifications)](http-listening/listen-letsencrypt/main.go)
-- [Custom TCP Listener](http-listening/custom-listener/main.go)
+- Custom TCP Listener
+    * [common net.Listener](http-listening/custom-listener/main.go)
+    * [SO_REUSEPORT for unix systems](http-listening/custom-listener/unix-reuseport/main.go)
 - Custom HTTP Server
     * [ion way](http-listening/custom-httpserver/ion-way/main.go)
     * [std way](http-listening/custom-httpserver/std-way/main.go)

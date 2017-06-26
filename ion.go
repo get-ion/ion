@@ -17,7 +17,7 @@ import (
 	// core packages, needed to build the application
 	"github.com/get-ion/ion/core/errors"
 	"github.com/get-ion/ion/core/host"
-	"github.com/get-ion/ion/core/nettools"
+	"github.com/get-ion/ion/core/netutil"
 	"github.com/get-ion/ion/core/router"
 	// view
 	"github.com/get-ion/ion/view"
@@ -225,7 +225,7 @@ func (app *Application) NewHost(srv *http.Server) *host.Supervisor {
 		// sub.mydomain.com -> valid
 		// sub.localhost -> valid
 		// we need the host (without port if 80 or 443) in order to validate these, so:
-		app.config.vhost = nettools.ResolveVHost(srv.Addr)
+		app.config.vhost = netutil.ResolveVHost(srv.Addr)
 	}
 	// the below schedules some tasks that will run among the server
 
@@ -274,7 +274,7 @@ type Runner func(*Application) error
 // See `Run` for more.
 func Listener(l net.Listener) Runner {
 	return func(app *Application) error {
-		app.config.vhost = nettools.ResolveVHost(l.Addr().String())
+		app.config.vhost = netutil.ResolveVHost(l.Addr().String())
 		return app.NewHost(new(http.Server)).
 			Serve(l)
 	}
