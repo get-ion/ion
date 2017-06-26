@@ -75,3 +75,5 @@ func recordWhichContextJustForProofOfConcept(ctx context.Context) {
 	ctx.Application().Logger().Infof("(%s) Handler is executing from: '%s'", ctx.Path(), reflect.TypeOf(ctx).Elem().Name())
 	ctx.Next()
 }
+
+// Look "new-implementation" to see how you can create an entirely new Context with new functions.

@@ -37,7 +37,7 @@ It doesn't always contain the "best ways" but it does cover each important featu
 - [Import from TOML file](configuration/from-toml-file/main.go)
 
 
-### Basic Routing, Grouping, Dynamic Path Parameters and "Macros"
+### Routing, Grouping, Dynamic Path Parameters, "Macros" and Custom Context
 
 - [Overview](routing/overview/main.go)
 - [Basic](routing/basic/main.go)
@@ -47,6 +47,7 @@ It doesn't always contain the "best ways" but it does cover each important featu
 - [Custom wrapper](routing/custom-wrapper/main.go)
 - Custom Context
     * [Method Overriding](routing/custom-context/method-overriding/main.go)
+    * [New Implementation](routing/custom-context/new-implementation/main.go)
 - [Route State](routing/route-state/main.go)
 
 ### Subdomains

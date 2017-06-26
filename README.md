@@ -41,6 +41,7 @@ Ion is a fast, simple and efficient micro web framework for Go. It provides a be
 | Feature | Awesome |
 | -----------|-------------|
 | [Core](_examples/) | &#10003; |
+| [Custom Context Registry](_examples/#basic-routing-grouping-dynamic-path-parameters-macros-and-custom-context) | &#10003; |
 | [View Engine](_examples/#view) | &#10003; |
 | [Sessions](https://github.com/get-ion/sessions) | &#10003; |
 | [Websockets](https://github.com/get-ion/websocket) | &#10003; |
