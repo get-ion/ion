@@ -43,7 +43,7 @@ func main() {
 		proc.Host().DeferFlow() // defer the exit, in order to catch the event
 		srv.Shutdown(ctx)       // Shutdown the supervisor, only this way the proc.Host().Done will be notified
 		// the proc.Host().Shutdown, closes the underline server but no the supervisor.
-		// This behavior was choosen because is inneed for custom maintanance services
+		// This behavior was chosen because is inneed for custom maintenance services
 		// (i.e restart server every week without loosing connections) which you can easly adapt with ion.
 	}))
 

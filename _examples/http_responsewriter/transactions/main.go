@@ -32,7 +32,7 @@ func main() {
 
 			// OPTIONAl STEP:
 			// but useful if we want to post back an error message to the client if the transaction failed.
-			// if the reason is empty then the transaction completed succesfuly,
+			// if the reason is empty then the transaction completed successfully,
 			// otherwise we rollback the whole response writer's body,
 			// headers and cookies, status code and everything lives inside this transaction
 			t.Complete(err)
