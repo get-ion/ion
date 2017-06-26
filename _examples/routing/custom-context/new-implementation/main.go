@@ -5,11 +5,39 @@ import (
 
 	"github.com/get-ion/ion"
 	"github.com/get-ion/ion/context"
+	"github.com/get-ion/sessions"
 )
 
+// Owner is our application structure, it contains the methods or fields we need,
+// think it as the owner of our *Context.
+type Owner struct {
+	// define here the fields that are global
+	// and shared to all clients.
+	sessionsManager *sessions.Sessions
+}
+
+// this package-level variable "application" will be used inside context to communicate with our global Application.
+var owner = &Owner{
+	sessionsManager: sessions.New(sessions.Config{Cookie: "mysessioncookie"}),
+}
+
 // Context is our custom context.
+// Let's implement a context which will give us access
+// to the client's Session with a trivial `ctx.Session()` call.
 type Context struct {
 	context.Context
+	session *sessions.Session
+}
+
+// Session returns the current client's session.
+func (ctx *Context) Session() *sessions.Session {
+	// this help us if we call `Session()` multiple times in the same handler
+	if ctx.session == nil {
+		// start a new session if not created before.
+		ctx.session = owner.sessionsManager.Start(ctx.Context)
+	}
+
+	return ctx.session
 }
 
 // Bold will send a bold text to the client.
@@ -23,7 +51,8 @@ var contextPool = sync.Pool{New: func() interface{} {
 
 func acquire(original context.Context) *Context {
 	ctx := contextPool.Get().(*Context)
-	ctx.Context = original
+	ctx.Context = original // set the context to the original one in order to have access to ion's implementation.
+	ctx.session = nil      // reset the session
 	return ctx
 }
 
@@ -51,11 +80,25 @@ func newApp() *ion.Application {
 		ctx.Bold("Hello from our *Context")
 	}))
 
+	app.Post("/set", Handler(func(ctx *Context) {
+		nameFieldValue := ctx.FormValue("name")
+		ctx.Session().Set("name", nameFieldValue)
+		ctx.Writef("set session = " + nameFieldValue)
+	}))
+
+	app.Get("/get", Handler(func(ctx *Context) {
+		name := ctx.Session().GetString("name")
+		ctx.Writef(name)
+	}))
+
 	return app
 }
 
 func main() {
 	app := newApp()
 
+	// GET: http://localhost:8080
+	// POST: http://localhost:8080/set
+	// GET: http://localhost:8080/get
 	app.Run(ion.Addr(":8080"))
 }
