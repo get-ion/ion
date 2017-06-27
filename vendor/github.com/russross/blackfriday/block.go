@@ -1204,7 +1204,7 @@ gatherlines:
 			*flags |= LIST_ITEM_CONTAINS_BLOCK
 		}
 
-		// if this line was preceeded by one or more blanks,
+		// if this line was preceded by one or more blanks,
 		// re-introduce the blank into the buffer
 		if containsBlankLine {
 			containsBlankLine = false
