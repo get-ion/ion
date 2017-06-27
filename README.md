@@ -99,41 +99,15 @@ func main() {
 
 We expect Go version 1.9 to be released in August, however you can install Go 1.9 beta today.
 
-### [Installing Go 1.9 from source](https://golang.org/doc/install/source)
+### Installing Go 1.9beta2
  
-(Optional) Install a C compiler
-
-To build a Go installation with cgo support, which permits Go programs to import C libraries, a C compiler such as gcc or clang must be installed first. Do this using whatever installation method is standard on the system.
-
-To build without cgo, set the environment variable CGO_ENABLED=0 before running all.bash or make.bash. 
-
-
-Rename your current Go root folder (i.e C:/go) to "go_1.8.3"
-
-Set `GOROOT_BOOTSTRAP` to that go root path (i.e C:/go_1.8.3)
-
-Execute the below commands
-
+1. Go to https://golang.org/dl/#go1.9beta2
+2. Download a compatible, with your OS, archieve, i.e `go1.9beta2.windows-amd64.zip`
+3. Unzip the contents of `go1.9beta2.windows-amd64.zip/go` folder to your $GOROOT, i.e `C:\Go`
+4. Open a terminal and execute `go version`, it should output the go1.9beta2 version, i.e:
 ```sh
-git clone https://go.googlesource.com/go
-cd go
-git checkout go1.9beta1
-cd src
-./all.bash
-```
-
-> To build under Unix use all.bash
-
-
-
-If all goes well, it will finish by printing output like:
-```
-ALL TESTS PASSED
-
----
-Installed Go for linux/amd64 in /home/you/go.
-Installed commands in /home/you/go/bin.
-*** You need to add /home/you/go/bin to your $PATH. ***
+C:\Users\hiveminded>go version
+go version go1.9beta2 windows/amd64
 ```
 
 </details>
