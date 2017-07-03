@@ -1,4 +1,5 @@
-# Middleware
+Basic Built'n Handlers
+------------
 
 | Middleware | Example |
 | -----------|-------------|
@@ -16,15 +17,17 @@ ion has its own middleware form of `func(ctx context.Context)` but it's also com
 
 Here's a small list of third-party handlers:
 
+> handlers that are ported to work with _ion_'s handlers contains an _Example_ link at the _Description_ column.
+
 | Middleware | Author | Description |
 | -----------|--------|-------------|
 | [jwt](https://github.com/get-ion/middleware/tree/master/jwt) | [Auth0](https://github.com/auth0) | Middleware checks for a JWT on the `Authorization` header on incoming requests and decodes it. [Example](https://github.com/get-ion/middleware/tree/master/jwt/_example) |
 | [cors](https://github.com/get-ion/middleware/tree/master/cors) | [rs](https://github.com/rs) | HTTP Access Control. [Example](https://github.com/get-ion/middleware/tree/master/cors/_example) |
 | [secure](https://github.com/get-ion/middleware/tree/master/secure) | [Cory Jacobsen](https://github.com/unrolled) | Middleware that implements a few quick security wins. [Example](https://github.com/get-ion/middleware/tree/master/secure/_example/main.go) |
-| [tollbooth](https://github.com/get-ion/middleware/tree/master/tollboothic) | [Didip Kerabat](https://github.com/didip) | Generic middleware to rate-limit HTTP requests. [Example](https://github.com/get-ion/middleware/tree/master/tollbooth/_examples/limit-handler) |
+| [tollbooth](https://github.com/get-ion/middleware/tree/master/tollboothic) | [Didip Kerabat](https://github.com/didip) | Generic middleware to rate-limit HTTP requests. [Example](https://github.com/get-ion/middleware/tree/master/tollbooth/_examples/limit-handler)|
+| [cloudwatch](https://github.com/get-ion/middleware/tree/master/cloudwatch) | [Colin Steele](https://github.com/cvillecsteele) | AWS cloudwatch metrics middleware. [Example](https://github.com/get-ion/middleware/tree/master/cloudwatch/_example) |
 | [goth](https://github.com/markbates/goth) | [Mark Bates](https://github.com/markbates) | OAuth, OAuth2 authentication. [Example](https://github.com/get-ion/ion/tree/master/_examples/authentication/oauth2) |
 | [binding](https://github.com/mholt/binding) | [Matt Holt](https://github.com/mholt) | Data binding from HTTP requests into structs |
-| [cloudwatch](https://github.com/cvillecsteele/negroni-cloudwatch) | [Colin Steele](https://github.com/cvillecsteele) | AWS cloudwatch metrics middleware |
 | [csp](https://github.com/awakenetworks/csp) | [Awake Networks](https://github.com/awakenetworks) | [Content Security Policy](https://www.w3.org/TR/CSP2/) (CSP) support |
 | [delay](https://github.com/jeffbmartinez/delay) | [Jeff Martinez](https://github.com/jeffbmartinez) | Add delays/latency to endpoints. Useful when testing effects of high latency |
 | [New Relic Go Agent](https://github.com/yadvendar/negroni-newrelic-go-agent) | [Yadvendar Champawat](https://github.com/yadvendar) | Official [New Relic Go Agent](https://github.com/newrelic/go-agent)  |

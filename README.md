@@ -133,7 +133,7 @@ Join the welcoming community of fellow _ion_ developers in [slack](https://get-i
 
 ### 🏫 Learn
 
-The awesome _ion_ community is always adding new examples, [_examples](/examples) is a great place to get started!
+The awesome _ion_ community is always adding new examples, [_examples](_examples/) is a great place to get started!
 
 Read the [godocs](https://godoc.org/github.com/get-ion/ion) for a better understanding.
 
