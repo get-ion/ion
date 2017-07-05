@@ -711,6 +711,10 @@ type Context interface {
 	// 		return u, ok
 	// 	}
 	Value(key interface{}) interface{}
+
+	// SetValue stores the key-value in this context.
+	// To pass data between middleware and middleware or middleware and handle
+	SetValue(key string, value interface{})
 }
 
 // Next calls all the next handler from the handlers chain,
@@ -2330,7 +2334,11 @@ func (ctx *context) Value(key interface{}) interface{} {
 		return ctx.request
 	}
 	if k, ok := key.(string); ok {
-		return ctx.values.GetString(k)
+		return ctx.values.Get(k)
 	}
 	return nil
+}
+
+func (ctx *context) SetValue(key string, value interface{})  {
+	ctx.values.Set(key, value)
 }
