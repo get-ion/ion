@@ -16,6 +16,7 @@ ratings:
     - "**.go"
 exclude_paths:
   - "context.go" # go 1.9
+  - "/code/context.go" # go 1.9
   - "_examples/**/*"
   - "vendor/**/*"
   - "ionic/**/*"
