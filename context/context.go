@@ -1060,23 +1060,32 @@ func (ctx *context) RemoteAddr() string {
 	if realIP != "" {
 		return realIP
 	}
-	realIP = ctx.GetHeader("X-Forwarded-For")
-	idx := strings.IndexByte(realIP, ',')
+
+	header = ctx.GetHeader("X-Forwarded-For")
+	idx := strings.IndexByte(header, ',')
 	if idx >= 0 {
-		realIP = realIP[0:idx]
+		header = header[0:idx]
 	}
-	realIP = strings.TrimSpace(realIP)
+	realIP = strings.TrimSpace(header)
 	if realIP != "" {
 		return realIP
 	}
+
+	// cloudflare
+	header = ctx.GetHeader("HTTP_CF_CONNECTING_IP")
+	realIP = strings.TrimSpace(header)
+	if realIP != "" {
+		return realIP
+	}
+
 	addr := strings.TrimSpace(ctx.request.RemoteAddr)
-	if len(addr) == 0 {
-		return ""
+	if addr != "" {
+		// if addr has port use the net.SplitHostPort otherwise(error occurs) take as it is
+		if ip, _, err := net.SplitHostPort(addr); err == nil {
+			return ip
+		}
 	}
-	// if addr has port use the net.SplitHostPort otherwise(error occurs) take as it is
-	if ip, _, err := net.SplitHostPort(addr); err == nil {
-		return ip
-	}
+
 	return addr
 }
 
