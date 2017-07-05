@@ -1,10 +1,7 @@
 ---
 engines:
   golint:
-    enabled: true
-    checks:
-      GoLint/Naming/MixedCaps:
-        enabled: false
+    enabled: false
   govet:
     enabled: true
   gofmt:
@@ -16,7 +13,7 @@ ratings:
     - "**.go"
 exclude_paths:
   - "context.go" # go 1.9
-  - "/code/context.go" # go 1.9
+  - "code/context.go" # go 1.9 codeclimate
   - "_examples/**/*"
   - "vendor/**/*"
   - "ionic/**/*"
