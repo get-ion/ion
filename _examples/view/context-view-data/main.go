@@ -1,7 +1,3 @@
-// this example will show you how you can set per-request data for a template outside of the main handler which calls
-// the .Render, via middleware.
-//
-// Remember: .Render has the "binding" argument which can be used to send data to the template at any case.
 package main
 
 import (

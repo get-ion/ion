@@ -95,10 +95,15 @@ type Configurator func(*Application)
 // variables for configurators don't need any receivers, functions
 // for them that need (helps code editors to recognise as variables without parenthesis completion).
 
-// WithoutBanner turns off the write banner on server startup.
-var WithoutBanner = func(app *Application) {
+// WithoutStartupLog turns off the information send, once, to the terminal when the main server is open.
+var WithoutStartupLog = func(app *Application) {
 	app.config.DisableStartupLog = true
 }
+
+// WithoutBanner is a conversion for the `WithoutStartupLog` option.
+//
+// Turns off the information send, once, to the terminal when the main server is open.
+var WithoutBanner = WithoutStartupLog
 
 // WithoutInterruptHandler disables the automatic graceful server shutdown
 // when control/cmd+C pressed.

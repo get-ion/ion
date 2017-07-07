@@ -8,11 +8,11 @@ import (
 func main() {
 	app := ion.New() // defaults to these
 
-	// - standard html  | view.HTML(...)
-	// - django         | view.Django(...)
-	// - pug(jade)      | view.Pug(...)
-	// - handlebars     | view.Handlebars(...)
-	// - amber          | view.Amber(...)
+	// - standard html  | ion.HTML(...)
+	// - django         | ion.Django(...)
+	// - pug(jade)      | ion.Pug(...)
+	// - handlebars     | ion.Handlebars(...)
+	// - amber          | ion.Amber(...)
 
 	tmpl := ion.HTML("./templates", ".html")
 	tmpl.Reload(true) // reload templates on each request (development mode)
@@ -40,3 +40,16 @@ func hi(ctx context.Context) {
 	// ctx.ViewData("", myCcustomStruct{})
 	ctx.View("hi.html")
 }
+
+/*
+Note:
+
+In case you're wondering, the code behind the view engines derives from the "github.com/get-ion/ion/view" package,
+access to the engines' variables can be granded by "github.com/get-ion/ion" package too.
+
+    ion.HTML(...) is a shortcut of view.HTML(...)
+    ion.Django(...)     >> >>      view.Django(...)
+    ion.Pug(...)        >> >>      view.Pug(...)
+    ion.Handlebars(...) >> >>      view.Handlebars(...)
+    ion.Amber(...)      >> >>      view.Amber(...)
+*/

@@ -8,11 +8,11 @@ import (
 func main() {
 	app := ion.New()
 
-	// - standard html  | view.HTML(...)
-	// - django         | view.Django(...)
-	// - pug(jade)      | view.Pug(...)
-	// - handlebars     | view.Handlebars(...)
-	// - amber          | view.Amber(...)
+	// - standard html  | ion.HTML(...)
+	// - django         | ion.Django(...)
+	// - pug(jade)      | ion.Pug(...)
+	// - handlebars     | ion.Handlebars(...)
+	// - amber          | ion.Amber(...)
 	// with default template funcs:
 	//
 	// - {{ urlpath "mynamedroute" "pathParameter_ifneeded" }}
@@ -20,8 +20,6 @@ func main() {
 	// - {{ render_r "header.html" }} // partial relative path to current page
 	// - {{ yield }}
 	// - {{ current }}
-	//
-	// ion.HTML is a conversion for ion/view/html.go#HTML
 	app.RegisterView(ion.HTML("./templates", ".html"))
 	app.Get("/", func(ctx context.Context) {
 
@@ -34,3 +32,16 @@ func main() {
 	// http://localhost:8080/
 	app.Run(ion.Addr(":8080"))
 }
+
+/*
+Note:
+
+In case you're wondering, the code behind the view engines derives from the "github.com/get-ion/ion/view" package,
+access to the engines' variables can be granded by "github.com/get-ion/ion" package too.
+
+    ion.HTML(...) is a shortcut of view.HTML(...)
+    ion.Django(...)     >> >>      view.Django(...)
+    ion.Pug(...)        >> >>      view.Pug(...)
+    ion.Handlebars(...) >> >>      view.Handlebars(...)
+    ion.Amber(...)      >> >>      view.Amber(...)
+*/

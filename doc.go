@@ -48,7 +48,6 @@ Example code:
     import (
         "github.com/get-ion/ion"
         "github.com/get-ion/ion/context"
-        "github.com/get-ion/ion/view"
     )
 
     // User is just a bindable object structure.
@@ -66,7 +65,7 @@ Example code:
         // Define templates using the std html/template engine.
         // Parse and load all files inside "./views" folder with ".html" file extension.
         // Reload the templates on each request (development mode).
-        app.RegisterView(view.HTML("./views", ".html").Reload(true))
+        app.RegisterView(ion.HTML("./views", ".html").Reload(true))
 
         // Regster custom handler for specific http errors.
         app.OnErrorCode(ion.StatusInternalServerError, func(ctx context.Context) {
@@ -839,19 +838,18 @@ Example code:
     import (
         "github.com/get-ion/ion"
         "github.com/get-ion/ion/context"
-        "github.com/get-ion/ion/view"
     )
 
     func main() {
         app := ion.New() // defaults to these
 
-        // - standard html  | view.HTML(...)
-        // - django         | view.Django(...)
-        // - pug(jade)      | view.Pug(...)
-        // - handlebars     | view.Handlebars(...)
-        // - amber          | view.Amber(...)
+        // - standard html  | ion.HTML(...)
+        // - django         | ion.Django(...)
+        // - pug(jade)      | ion.Pug(...)
+        // - handlebars     | ion.Handlebars(...)
+        // - amber          | ion.Amber(...)
 
-        tmpl := view.HTML("./templates", ".html")
+        tmpl := ion.HTML("./templates", ".html")
         tmpl.Reload(true) // reload templates on each request (development mode)
         // default template funcs are:
         //
@@ -891,7 +889,6 @@ Example code:
     import (
         "github.com/get-ion/ion"
         "github.com/get-ion/ion/context"
-        "github.com/get-ion/ion/view"
     )
 
     func main() {
@@ -901,7 +898,7 @@ Example code:
         // $ go build
         // $ ./embedding-templates-into-app
         // html files are not used, you can delete the folder and run the example
-        app.RegisterView(view.HTML("./templates", ".html").Binary(Asset, AssetNames))
+        app.RegisterView(ion.HTML("./templates", ".html").Binary(Asset, AssetNames))
         app.Get("/", hi)
 
         // http://localhost:8080
@@ -926,10 +923,20 @@ as they no neeed to restart their app on every template edit.
 Example code:
 
 
-    pugEngine := view.Pug("./templates", ".jade")
+    pugEngine := ion.Pug("./templates", ".jade")
     pugEngine.Reload(true) // <--- set to true to re-build the templates on each request.
     app.RegisterView(pugEngine)
 
+Note:
+
+In case you're wondering, the code behind the view engines derives from the "github.com/get-ion/ion/view" package,
+access to the engines' variables can be granded by "github.com/get-ion/ion" package too.
+
+    ion.HTML(...) is a shortcut of view.HTML(...)
+    ion.Django(...)     >> >>      view.Django(...)
+    ion.Pug(...)        >> >>      view.Pug(...)
+    ion.Handlebars(...) >> >>      view.Handlebars(...)
+    ion.Amber(...)      >> >>      view.Amber(...)
 
 Each one of these template engines has different options located here: https://github.com/get-ion/ion/tree/master/view .
 
