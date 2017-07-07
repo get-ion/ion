@@ -1053,29 +1053,40 @@ func (ctx *context) Subdomain() (subdomain string) {
 	return
 }
 
-// RemoteAddr tries to return the real client's request IP.
+// RemoteAddr tries to parse and return the real client's request IP.
+//
+// Based on allowed headers names that can be modified from Configuration.RemoteAddrHeaders.
+//
+// Headers that are allowed by-default are:
+// "X-Real-Ip",
+// "X-Forwarded-For"
+//
+// If parse based on these headers fail then it will return the Request's `RemoteAddr` field
+// which is filled by the server before the HTTP handler.
+//
+// Look `Configuration.RemoteAddrHeaders`,
+//      `Configuration.WithRemoteAddrHeader(...)`,
+//      `Configuration.WithoutRemoteAddrHeader(...)` for more.
 func (ctx *context) RemoteAddr() string {
-	header := ctx.GetHeader("X-Real-Ip")
-	realIP := strings.TrimSpace(header)
-	if realIP != "" {
-		return realIP
-	}
 
-	header = ctx.GetHeader("X-Forwarded-For")
-	idx := strings.IndexByte(header, ',')
-	if idx >= 0 {
-		header = header[0:idx]
-	}
-	realIP = strings.TrimSpace(header)
-	if realIP != "" {
-		return realIP
-	}
+	remoteHeaders := ctx.Application().ConfigurationReadOnly().GetRemoteAddrHeaders()
 
-	// cloudflare
-	header = ctx.GetHeader("HTTP_CF_CONNECTING_IP")
-	realIP = strings.TrimSpace(header)
-	if realIP != "" {
-		return realIP
+	for headerName, enabled := range remoteHeaders {
+		if enabled {
+			headerValue := ctx.GetHeader(headerName)
+			// exception needed for 'X-Forwarded-For' only , if enabled.
+			if headerName == "X-Forwarded-For" {
+				idx := strings.IndexByte(headerValue, ',')
+				if idx >= 0 {
+					headerValue = headerValue[0:idx]
+				}
+			}
+
+			realIP := strings.TrimSpace(headerValue)
+			if realIP != "" {
+				return realIP
+			}
+		}
 	}
 
 	addr := strings.TrimSpace(ctx.request.RemoteAddr)

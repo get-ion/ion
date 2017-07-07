@@ -29,7 +29,7 @@ import (
 const (
 
 	// Version is the current version number of the ion micro web framework.
-	Version = "1.0.0"
+	Version = "1.0.1"
 )
 
 // Application is responsible to manage the state of the application.
@@ -398,7 +398,7 @@ var ErrServerClosed = http.ErrServerClosed
 // then create a new host and run it manually by `go NewHost(*http.Server).Serve/ListenAndServe` etc...
 // or use an already created host:
 // h := NewHost(*http.Server)
-// Run(Raw(h.ListenAndServe), WithoutStartupLog, WithCharset("UTF-8"))
+// Run(Raw(h.ListenAndServe), WithoutStartupLog, WithCharset("UTF-8"), WithRemoteAddrHeader("HTTP_CF_CONNECTING_IP"))
 //
 // The Application can go online with any type of server or ion's host with the help of
 // the following runners:
