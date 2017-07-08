@@ -168,8 +168,8 @@ func WithCharset(charset string) Configurator {
 // that can be used to validate the client's real IP.
 //
 // Existing values are:
-// "X-Real-Ip":             true,
-// "X-Forwarded-For":       true,
+// "X-Real-Ip":             false,
+// "X-Forwarded-For":       false,
 // "HTTP_CF_CONNECTING_IP": false
 //
 // Look `context.RemoteAddr()` for more.
@@ -186,8 +186,8 @@ func WithRemoteAddrHeader(headerName string) Configurator {
 // that can be used to validate the client's real IP.
 //
 // Existing values are:
-// "X-Real-Ip":             true,
-// "X-Forwarded-For":       true,
+// "X-Real-Ip":             false,
+// "X-Forwarded-For":       false,
 // "HTTP_CF_CONNECTING_IP": false
 //
 // Look `context.RemoteAddr()` for more.
@@ -322,8 +322,8 @@ type Configuration struct {
 	// that can be valid to parse the client's IP based on.
 	//
 	// Defaults to:
-	// "X-Real-Ip":             true,
-	// "X-Forwarded-For":       true,
+	// "X-Real-Ip":             false,
+	// "X-Forwarded-For":       false,
 	// "HTTP_CF_CONNECTING_IP": false
 	//
 	// Look `context.RemoteAddr()` for more.
@@ -429,8 +429,8 @@ func (c Configuration) GetViewDataContextKey() string {
 // that can be valid to parse the client's IP based on.
 //
 // Defaults to:
-// "X-Real-Ip":             true,
-// "X-Forwarded-For":       true,
+// "X-Real-Ip":             false,
+// "X-Forwarded-For":       false,
 // "HTTP_CF_CONNECTING_IP": false
 //
 // Look `context.RemoteAddr()` for more.
@@ -544,8 +544,8 @@ func DefaultConfiguration() Configuration {
 		ViewLayoutContextKey:              "ion.viewLayout",
 		ViewDataContextKey:                "ion.viewData",
 		RemoteAddrHeaders: map[string]bool{
-			"X-Real-Ip":             true,
-			"X-Forwarded-For":       true,
+			"X-Real-Ip":             false,
+			"X-Forwarded-For":       false,
 			"HTTP_CF_CONNECTING_IP": false,
 		},
 		Other: make(map[string]interface{}, 0),

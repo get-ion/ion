@@ -265,7 +265,16 @@ type Context interface {
 	// Subdomain returns the subdomain of this request, if any.
 	// Note that this is a fast method which does not cover all cases.
 	Subdomain() (subdomain string)
-	// RemoteAddr tries to return the real client's request IP.
+	// RemoteAddr tries to parse and return the real client's request IP.
+	//
+	// Based on allowed headers names that can be modified from Configuration.RemoteAddrHeaders.
+	//
+	// If parse based on these headers fail then it will return the Request's `RemoteAddr` field
+	// which is filled by the server before the HTTP handler.
+	//
+	// Look `Configuration.RemoteAddrHeaders`,
+	//      `Configuration.WithRemoteAddrHeader(...)`,
+	//      `Configuration.WithoutRemoteAddrHeader(...)` for more.
 	RemoteAddr() string
 	// GetHeader returns the request header's value based on its name.
 	GetHeader(name string) string
@@ -1056,10 +1065,6 @@ func (ctx *context) Subdomain() (subdomain string) {
 // RemoteAddr tries to parse and return the real client's request IP.
 //
 // Based on allowed headers names that can be modified from Configuration.RemoteAddrHeaders.
-//
-// Headers that are allowed by-default are:
-// "X-Real-Ip",
-// "X-Forwarded-For"
 //
 // If parse based on these headers fail then it will return the Request's `RemoteAddr` field
 // which is filled by the server before the HTTP handler.
