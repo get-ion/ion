@@ -8,7 +8,7 @@
 		<img src="https://img.shields.io/badge/report%20card-a%2B-ff3333.svg?style=flat-square" alt="report card">
 	</a>
 	<a href="https://godoc.org/github.com/get-ion/ion">
-		<img src="https://img.shields.io/badge/godocs-1.0.x-0366d6.svg?style=flat-square" alt="godocs">
+		<img src="https://img.shields.io/badge/godocs-1.1.x-0366d6.svg?style=flat-square" alt="godocs">
 	</a>
 	<a href="https://github.com/get-ion/issues-v1/issues">
 		<img src="https://img.shields.io/badge/get-support-cccc00.svg?style=flat-square" alt="get support">
@@ -29,7 +29,7 @@
 <!--
 [![build status](https://img.shields.io/travis/get-ion/ion/master.svg?style=flat-square)](https://travis-ci.org/get-ion/ion)
 [![report card](https://img.shields.io/badge/report%20card-a%2B-ff3333.svg?style=flat-square)](http://goreportcard.com/report/get-ion/ion)
-[![godocs](https://img.shields.io/badge/godocs-1.0.x-0366d6.svg?style=flat-square)](https://godoc.org/github.com/get-ion/ion)
+[![godocs](https://img.shields.io/badge/godocs-1.1.x-0366d6.svg?style=flat-square)](https://godoc.org/github.com/get-ion/ion)
 [![get support](https://img.shields.io/badge/get-support-cccc00.svg?style=flat-square)](https://github.com/get-ion/issues-v1/issues)
 [![view examples](https://img.shields.io/badge/learn%20by-examples-0077b3.svg?style=flat-square)](https://github.com/get-ion/ion/tree/master/_examples)
 [![ion channel on slack](https://get-invite.herokuapp.com/badge.svg?style=flat-square)](https://get-invite.herokuapp.com)
@@ -69,11 +69,29 @@ import (
 )
 func main() {
 	app := ion.New()
-	app.Handle("GET", "/", func(ctx context.Context) {
-		ctx.HTML("<b>Hello world!</b>")
+	// Load all templates from the "./templates" folder
+	// where extension is ".html" and parse them
+	// using the standard `html/template` package.
+	app.RegisterView(ion.HTML("./templates", ".html"))
+
+	// Method:    GET
+	// Resource:  http://localhost:8080
+	app.Get("/", func(ctx context.Context) {
+		// Bind: {{.message}} with "Hello world!"
+		ctx.ViewData("message", "Hello world!")
+		// Render template file: ./templates/hello.html
+		ctx.View("hello.html")
 	})
+
+	// Start the server using a network address and block.
 	app.Run(ion.Addr(":8080"))
 }
+```
+
+```sh 
+$ go run main.go
+> Now listening on: http://localhost:8080
+> Application started. Press CTRL+C to shut down.
 ```
 
 <details>
@@ -90,9 +108,13 @@ import "github.com/get-ion/ion"
 
 func main() {
 	app := ion.New()
-	app.Handle("GET", "/", func(ctx ion.Context) {
-		ctx.HTML("<b>Hello world!</b>")
+	app.RegisterView(ion.HTML("./templates", ".html"))
+	
+	app.Get("/", func(ctx ion.Context) {
+		ctx.ViewData("message", "Hello world!")
+		ctx.View("hello.html")
 	})
+
 	app.Run(ion.Addr(":8080"))
 }
 ```

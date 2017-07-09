@@ -33,6 +33,10 @@ Source code and other details for the project are available at GitHub:
 
    https://github.com/get-ion/ion
 
+Current Version
+
+1.1.0
+
 Installation
 
 The only requirement is the Go Programming Language, at least version 1.8.x
@@ -159,6 +163,147 @@ Example code:
         ctx.ViewData("", user)
         ctx.View("users/create_verification.html")
     }
+
+Listening and gracefully shutdown
+
+You can listen to a server using any type of net.Listener or http.Server instance.
+The method for initialization of the server should be passed at the end, via `Run` function.
+
+Below you'll read some usage examples:
+
+
+    // Listening on tcp with network address 0.0.0.0:8080
+    app.Run(ion.Addr(":8080"))
+
+
+    // Same as before but using a custom http.Server which may being used somewhere else too
+    app.Run(ion.Server(&http.Server{Addr:":8080"}))
+
+
+    // Using a custom net.Listener
+    l, err := net.Listen("tcp4", ":8080")
+    if err != nil {
+        panic(err)
+    }
+    app.Run(ion.Listener(l))
+
+
+    // TLS using files
+    app.Run(ion.TLS("127.0.0.1:443", "mycert.cert", "mykey.key"))
+
+
+    // Automatic TLS
+    app.Run(ion.AutoTLS("localhost:443"))
+
+
+    // UNIX socket
+    l, err := netutil.UNIX("/tmpl/srv.sock", 0666)
+	if err != nil {
+		panic(err)
+	}
+
+	app.Run(ion.Listener(l))
+
+    // Using any func() error , the responsibility of starting up a listener is up to you with this way,
+    // for the sake of simplicity we will use the ListenAndServe function of the `net/http` package.
+    app.Run(ion.Raw(&http.Server{Addr:":8080"}).ListenAndServe)
+
+
+UNIX and BSD hosts can take advandage of the reuse port feature.
+
+Example code:
+
+
+    package main
+
+    import (
+        // Package tcplisten provides customizable TCP net.Listener with various
+        // performance-related options:
+        //
+        //   - SO_REUSEPORT. This option allows linear scaling server performance
+        //     on multi-CPU servers.
+        //     See https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/ for details.
+        //
+        //   - TCP_DEFER_ACCEPT. This option expects the server reads from the accepted
+        //     connection before writing to them.
+        //
+        //   - TCP_FASTOPEN. See https://lwn.net/Articles/508865/ for details.
+        "github.com/valyala/tcplisten"
+
+        "github.com/get-ion/ion"
+        "github.com/get-ion/ion/context"
+    )
+
+    // $ go get github.com/valyala/tcplisten
+    // $ go run main.go
+
+    func main() {
+        app := ion.New()
+
+        app.Get("/", func(ctx context.Context) {
+            ctx.HTML("<b>Hello World!</b>")
+        })
+
+        listenerCfg := tcplisten.Config{
+            ReusePort:   true,
+            DeferAccept: true,
+            FastOpen:    true,
+        }
+
+        l, err := listenerCfg.NewListener("tcp", ":8080")
+        if err != nil {
+            panic(err)
+        }
+
+        app.Run(ion.Listener(l))
+    }
+
+That's all with listening, you have the full control when you need it.
+
+Let's continue by learning how to catch CONTROL+C/COMMAND+C or unix kill command and shutdown the server gracefuly.
+
+    Gracefully Shutdown on CONTROL+C/COMMAND+C or when kill command sent is ENABLED BY-DEFAULT.
+
+In order to manually manage what to do when app is interrupted,
+We have to disable the default behavior with the option `WithoutInterruptHandler`
+and register a new interrupt handler (globally, across all possible hosts).
+
+Example code:
+
+
+package main
+
+import (
+	stdContext "context"
+	"time"
+
+	"github.com/get-ion/ion"
+	"github.com/get-ion/ion/context"
+)
+
+
+func main() {
+	app := ion.New()
+
+	ion.RegisterOnInterrupt(func() {
+		timeout := 5 * time.Second
+		ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
+		defer cancel()
+		// close all hosts
+		app.Shutdown(ctx)
+	})
+
+	app.Get("/", func(ctx context.Context) {
+		ctx.HTML(" <h1>hi, I just exist in order to see if the server is closed</h1>")
+	})
+
+	// http://localhost:8080
+	app.Run(ion.Addr(":8080"), ion.WithoutInterruptHandler)
+}
+
+Read more about listening and gracefully shutdown by navigating to:
+
+    https://github.com/get-ion/ion/tree/master/_examples/#http-listening
 
 
 Routing

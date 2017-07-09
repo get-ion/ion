@@ -9,20 +9,20 @@ import (
 func main() {
 	app := ion.Default()
 
-	// Method: GET
+	// Method:   GET
 	// Resource: http://localhost:8080/
 	app.Handle("GET", "/", func(ctx ion.Context) {
 		ctx.HTML("<b>Hello world!</b>")
 	})
 
 	// same as app.Handle("GET", "/ping", [...])
-	// Method: GET
+	// Method:   GET
 	// Resource: http://localhost:8080/ping
 	app.Get("/ping", func(ctx ion.Context) {
 		ctx.WriteString("pong")
 	})
 
-	// Method: GET
+	// Method:   GET
 	// Resource: http://localhost:8080/hello
 	app.Get("/hello", func(ctx ion.Context) {
 		ctx.JSON(ion.Map{"message": "Hello ion web framework."})

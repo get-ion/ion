@@ -27,8 +27,7 @@ It doesn't always contain the "best ways" but it does cover each important featu
     * [std way](http-listening/custom-httpserver/std-way/main.go)
     * [multi server instances](http-listening/custom-httpserver/multi/main.go)
 - Graceful Shutdown
-    * [simple](http-listening/graceful-shutdown/basic/main.go)
-    * [with custom Host](http-listening/graceful-shutdown/custom-host/main.go)
+    * [using the `RegisterOnInterrupt`](http-listening/graceful-shutdown/default-notifier/main.go)
     * [using a custom notifier](http-listening/graceful-shutdown/custom-notifier/main.go)
    
 ### Configuration

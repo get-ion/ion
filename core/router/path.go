@@ -155,7 +155,7 @@ func WithHost(host string) RoutePathReverserOption {
 	return func(ps *RoutePathReverser) {
 		ps.vhost = host
 		if ps.vscheme == "" {
-			ps.vscheme = netutil.ResolveScheme(host)
+			ps.vscheme = netutil.ResolveSchemeFromVHost(host)
 		}
 	}
 }

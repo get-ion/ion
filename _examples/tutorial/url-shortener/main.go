@@ -26,9 +26,9 @@ func main() {
 	app := newApp(db)
 
 	// release the "db" connection when server goes off.
-	app.Scheduler.OnInterrupt(db.Close)
-	app.Run(ion.Addr(":8080"))
+	ion.RegisterOnInterrupt(db.Close)
 
+	app.Run(ion.Addr(":8080"))
 }
 
 func newApp(db *DB) *ion.Application {

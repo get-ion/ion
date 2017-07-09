@@ -13,10 +13,9 @@ import (
 
 func main() {
 	app := ion.New()
-	// output startup banner and error logs on os.Stdout
 
 	app.Get("/", func(ctx context.Context) {
-		ctx.HTML(" <h1>hi, I just exist in order to see if the server is closed</h1>")
+		ctx.HTML("<h1>hi, I just exist in order to see if the server is closed</h1>")
 	})
 
 	go func() {
@@ -33,16 +32,16 @@ func main() {
 		)
 		select {
 		case <-ch:
-			println("Shutdown the server gracefully...")
+			println("shutdown...")
 
-			timeout := 5 * time.Second // give the server 5 seconds to wait for idle connections.
+			timeout := 5 * time.Second
 			ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
 			defer cancel()
 			app.Shutdown(ctx)
 		}
 	}()
 
-	// Start the server and disable the default interrupt handler in order to handle it clear and simple by our own, without
-	// any issues.
+	// Start the server and disable the default interrupt handler in order to
+	// handle it clear and simple by our own, without any issues.
 	app.Run(ion.Addr(":8080"), ion.WithoutInterruptHandler)
 }

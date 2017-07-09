@@ -29,14 +29,12 @@ import (
 const (
 
 	// Version is the current version number of the ion micro web framework.
-	Version = "1.0.1"
+	Version = "1.1.0"
 )
 
 // Application is responsible to manage the state of the application.
 // It contains and handles all the necessary parts to create a fast web server.
 type Application struct {
-	Scheduler host.Scheduler
-
 	// routing embedded | exposing APIBuilder's and Router's public API.
 	*router.APIBuilder
 	*router.Router
@@ -54,8 +52,16 @@ type Application struct {
 	// used for build
 	once sync.Once
 
-	mu       sync.Mutex
-	Shutdown func(stdContext.Context) error
+	mu sync.Mutex
+	// Hosts contains a list of all servers (Host Supervisors) that this app is running on.
+	//
+	// Hosts may be empty only if application ran(`app.Run`) with `ion.Raw` option runner,
+	// otherwise it contains a single host (`app.Hosts[0]`).
+	//
+	// Additional Host Supervisors can be added to that list by calling the `app.NewHost` manually.
+	//
+	// Hosts field is available after `Run` or `NewHost`.
+	Hosts []*host.Supervisor
 }
 
 // New creates and returns a fresh empty ion *Application instance.
@@ -229,32 +235,36 @@ func (app *Application) NewHost(srv *http.Server) *host.Supervisor {
 	}
 	// the below schedules some tasks that will run among the server
 
-	// I was thinking to have them on Default or here and if user not wanted these, could use a custom core/host
-	// but that's too much for someone to just disable the banner for example,
-	// so I will bind them to a configuration field, although is not direct to the *Application,
-	// host is de-coupled from *Application as the other features too, it took me 2 months for this design.
-
-	// copy the registered schedule tasks from the scheduler, if any will be copied to this host supervisor's scheduler.
-	app.Scheduler.CopyTo(&su.Scheduler)
-
 	if !app.config.DisableStartupLog {
-		// show the banner and the available keys to exit from app.
-		su.Schedule(host.WriteStartupLog(app.logger.Out)) // app.logger.Writer -> Info
+		// show the available info to exit from app.
+		su.RegisterOnServe(host.WriteStartupLogOnServe(app.logger.Out)) // app.logger.Writer -> Info
 	}
 
 	if !app.config.DisableInterruptHandler {
-		// give 5 seconds to the server to wait for the (idle) connections.
-		shutdownTimeout := 5 * time.Second
-
 		// when CTRL+C/CMD+C pressed.
-		su.Schedule(host.ShutdownOnInterruptTask(shutdownTimeout))
+		shutdownTimeout := 5 * time.Second
+		host.RegisterOnInterrupt(host.ShutdownOnInterrupt(su, shutdownTimeout))
 	}
 
-	if app.Shutdown == nil {
-		app.Shutdown = su.Shutdown
-	}
+	app.Hosts = append(app.Hosts, su)
 
 	return su
+}
+
+// RegisterOnInterrupt registers a global function to call when CTRL+C/CMD+C pressed or a unix kill command received.
+//
+// A shortcut for the `host#RegisterOnInterrupt`.
+var RegisterOnInterrupt = host.RegisterOnInterrupt
+
+// Shutdown gracefully terminates all the application's server hosts.
+// Returns an error on the first failure, otherwise nil.
+func (app *Application) Shutdown(ctx stdContext.Context) error {
+	for _, su := range app.Hosts {
+		if err := su.Shutdown(ctx); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Runner is just an interface which accepts the framework instance
@@ -398,7 +408,7 @@ var ErrServerClosed = http.ErrServerClosed
 // then create a new host and run it manually by `go NewHost(*http.Server).Serve/ListenAndServe` etc...
 // or use an already created host:
 // h := NewHost(*http.Server)
-// Run(Raw(h.ListenAndServe), WithoutStartupLog, WithCharset("UTF-8"), WithRemoteAddrHeader("HTTP_CF_CONNECTING_IP"))
+// Run(Raw(h.ListenAndServe), WithCharset("UTF-8"), WithRemoteAddrHeader("HTTP_CF_CONNECTING_IP"))
 //
 // The Application can go online with any type of server or ion's host with the help of
 // the following runners:
