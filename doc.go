@@ -198,16 +198,17 @@ Below you'll read some usage examples:
 
     // UNIX socket
     l, err := netutil.UNIX("/tmpl/srv.sock", 0666)
-	if err != nil {
-		panic(err)
-	}
+    if err != nil {
+    panic(err)
+    }
 
-	app.Run(ion.Listener(l))
+    app.Run(ion.Listener(l))
 
-    // Using any func() error , the responsibility of starting up a listener is up to you with this way,
-    // for the sake of simplicity we will use the ListenAndServe function of the `net/http` package.
+    // Using any func() error,
+    // the responsibility of starting up a listener is up to you with this way,
+    // for the sake of simplicity we will use the
+    // ListenAndServe function of the `net/http` package.
     app.Run(ion.Raw(&http.Server{Addr:":8080"}).ListenAndServe)
-
 
 UNIX and BSD hosts can take advandage of the reuse port feature.
 
@@ -265,41 +266,42 @@ Let's continue by learning how to catch CONTROL+C/COMMAND+C or unix kill command
     Gracefully Shutdown on CONTROL+C/COMMAND+C or when kill command sent is ENABLED BY-DEFAULT.
 
 In order to manually manage what to do when app is interrupted,
-We have to disable the default behavior with the option `WithoutInterruptHandler`
+we have to disable the default behavior with the option `WithoutInterruptHandler`
 and register a new interrupt handler (globally, across all possible hosts).
+
 
 Example code:
 
 
-package main
+    package main
 
-import (
-	stdContext "context"
-	"time"
+    import (
+        stdContext "context"
+        "time"
 
-	"github.com/get-ion/ion"
-	"github.com/get-ion/ion/context"
-)
+        "github.com/get-ion/ion"
+        "github.com/get-ion/ion/context"
+    )
 
 
-func main() {
-	app := ion.New()
+    func main() {
+        app := ion.New()
 
-	ion.RegisterOnInterrupt(func() {
-		timeout := 5 * time.Second
-		ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
-		defer cancel()
-		// close all hosts
-		app.Shutdown(ctx)
-	})
+        ion.RegisterOnInterrupt(func() {
+            timeout := 5 * time.Second
+            ctx, cancel := stdContext.WithTimeout(stdContext.Background(), timeout)
+            defer cancel()
+            // close all hosts
+            app.Shutdown(ctx)
+        })
 
-	app.Get("/", func(ctx context.Context) {
-		ctx.HTML(" <h1>hi, I just exist in order to see if the server is closed</h1>")
-	})
+        app.Get("/", func(ctx context.Context) {
+            ctx.HTML(" <h1>hi, I just exist in order to see if the server is closed</h1>")
+        })
 
-	// http://localhost:8080
-	app.Run(ion.Addr(":8080"), ion.WithoutInterruptHandler)
-}
+        // http://localhost:8080
+        app.Run(ion.Addr(":8080"), ion.WithoutInterruptHandler)
+    }
 
 Read more about listening and gracefully shutdown by navigating to:
 
