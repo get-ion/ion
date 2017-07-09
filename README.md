@@ -64,28 +64,42 @@ $ go get github.com/get-ion/ion
 // file: main.go
 package main
 import (
-	"github.com/get-ion/ion"
-	"github.com/get-ion/ion/context"
+    "github.com/get-ion/ion"
+    "github.com/get-ion/ion/context"
 )
 func main() {
-	app := ion.New()
-	// Load all templates from the "./templates" folder
-	// where extension is ".html" and parse them
-	// using the standard `html/template` package.
-	app.RegisterView(ion.HTML("./templates", ".html"))
+    app := ion.New()
+    // Load all templates from the "./templates" folder
+    // where extension is ".html" and parse them
+    // using the standard `html/template` package.
+    app.RegisterView(ion.HTML("./templates", ".html"))
 
-	// Method:    GET
-	// Resource:  http://localhost:8080
-	app.Get("/", func(ctx context.Context) {
-		// Bind: {{.message}} with "Hello world!"
-		ctx.ViewData("message", "Hello world!")
-		// Render template file: ./templates/hello.html
-		ctx.View("hello.html")
-	})
+    // Method:    GET
+    // Resource:  http://localhost:8080
+    app.Get("/", func(ctx context.Context) {
+	    // Bind: {{.message}} with "Hello world!"
+	    ctx.ViewData("message", "Hello world!")
+	    // Render template file: ./templates/hello.html
+	    ctx.View("hello.html")
+})
 
-	// Start the server using a network address and block.
-	app.Run(ion.Addr(":8080"))
+    // Start the server using a network address and block.
+    app.Run(ion.Addr(":8080"))
 }
+```
+```html
+<!--file: ./templates/hello.html --->
+<html>
+
+<head>
+	<title>Hello Page</title>
+</head>
+
+<body>
+	<h1>{{.message}}</h1>
+</body>
+
+</html>
 ```
 
 ```sh 
