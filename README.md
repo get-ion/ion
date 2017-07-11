@@ -38,7 +38,7 @@
 
 Ion is a fast, simple and efficient micro web framework for Go. It provides a beautifully expressive and easy to use foundation for your next website, API, or distributed app.
 
-| Feature | Awesome |
+<!--| Feature | Awesome |
 | -----------|-------------|
 | [Core](_examples/) | &#10003; |
 | [Custom Context Registry](_examples/#routing-grouping-dynamic-path-parameters-macros-and-custom-context) | &#10003; |
@@ -48,7 +48,35 @@ Ion is a fast, simple and efficient micro web framework for Go. It provides a be
 | [Caching](https://github.com/get-ion/cache) | &#10003; |
 | [Typescript Tools](https://github.com/get-ion/typescript) | &#10003; |
 | [Test Framework](_examples/#testing) | &#10003; |
-| [STD `net/http` compatibility](_examples/#convert-httphandlerhandlerfunc) | &#10003; |
+| [STD `net/http` compatibility](_examples/#convert-httphandlerhandlerfunc) | &#10003; |-->
+
+
+### 📑 Table of contents
+
+* [Installation](#-installation)
+* [Learn](#-learn)
+	* [HTTP Listening](_examples/#http-listening)
+	* [Configuration](_examples/#configuration)
+	* [Routing, Grouping, Dynamic Path Parameters, "Macros" and Custom Context](_examples/#routing-grouping-dynamic-path-parameters-macros-and-custom-context)
+	* [Subdomains](_examples/#subdomains)
+	* [Wrap `http.Handler/HandlerFunc`](_examples/#convert-httphandlerhandlerfunc)
+	* [View](_examples/#view)
+	* [Authentication](_examples/#authentication)
+	* [File Server](_examples/#file-server)
+	* [How to Read from `context.Request() *http.Request`](_examples/#how-to-read-from-contextrequest-httprequest)
+	* [How to Write to `context.ResponseWriter() http.ResponseWriter`](_examples/#how-to-write-to-contextresponsewriter-httpresponsewriter)
+	* [Test](_examples/#testing)	
+	* [Cache](cache/#table-of-contents)
+	* [Sessions](sessions/#table-of-contents)
+	* [Websockets](websocket/#table-of-contents)
+	* [Miscellaneous](_examples/#miscellaneous)
+	* [Typescript Automation Tools](typescript/#table-of-contents)
+	* [Tutorial: Online Visitors](_examples/tutorial/online-visitors)
+	* [Tutorial: URL Shortener using BoltDB](_examples/tutorial/url-shortener)
+* [Middleware](middleware/)
+* [Dockerize](https://github.com/hiveminded/cloud-native-go)
+* [Support](#-support)
+* [People](#-people)
 
 ### 🚀 Installation
 
