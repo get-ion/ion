@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const tagName = "formam"
+const tagName = "form"
 
 // A pathMap holds the values of a map with its key and values correspondent
 type pathMap struct {

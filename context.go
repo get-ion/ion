@@ -33,9 +33,3 @@ type (
 	// A Map is a shortcut of the map[string]interface{}.
 	Map = context.Map
 )
-
-var (
-	// LimitRequestBodySize is a middleware which sets a request body size limit
-	// for all next handlers in the chain.
-	LimitRequestBodySize = context.LimitRequestBodySize
-)

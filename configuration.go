@@ -170,7 +170,7 @@ func WithCharset(charset string) Configurator {
 // Existing values are:
 // "X-Real-Ip":             false,
 // "X-Forwarded-For":       false,
-// "HTTP_CF_CONNECTING_IP": false
+// "CF-Connecting-IP": false
 //
 // Look `context.RemoteAddr()` for more.
 func WithRemoteAddrHeader(headerName string) Configurator {
@@ -188,7 +188,7 @@ func WithRemoteAddrHeader(headerName string) Configurator {
 // Existing values are:
 // "X-Real-Ip":             false,
 // "X-Forwarded-For":       false,
-// "HTTP_CF_CONNECTING_IP": false
+// "CF-Connecting-IP": false
 //
 // Look `context.RemoteAddr()` for more.
 func WithoutRemoteAddrHeader(headerName string) Configurator {
@@ -275,7 +275,7 @@ type Configuration struct {
 	//
 	// Developer may want this option to setted as true in order to manually call the
 	// error handlers when needed via "context.FireStatusCode(>=400)".
-	// HTTP Custom error handlers are being registered via "framework.OnStatusCode(code, handler)".
+	// HTTP Custom error handlers are being registered via "app.OnErrorCode(code, handler)".
 	//
 	// Defaults to false.
 	DisableAutoFireStatusCode bool `yaml:"DisableAutoFireStatusCode" toml:"DisableAutoFireStatusCode"`
@@ -324,7 +324,7 @@ type Configuration struct {
 	// Defaults to:
 	// "X-Real-Ip":             false,
 	// "X-Forwarded-For":       false,
-	// "HTTP_CF_CONNECTING_IP": false
+	// "CF-Connecting-IP": false
 	//
 	// Look `context.RemoteAddr()` for more.
 	RemoteAddrHeaders map[string]bool `yaml:"RemoteAddrHeaders" toml:"RemoteAddrHeaders"`
@@ -431,7 +431,7 @@ func (c Configuration) GetViewDataContextKey() string {
 // Defaults to:
 // "X-Real-Ip":             false,
 // "X-Forwarded-For":       false,
-// "HTTP_CF_CONNECTING_IP": false
+// "CF-Connecting-IP": false
 //
 // Look `context.RemoteAddr()` for more.
 func (c Configuration) GetRemoteAddrHeaders() map[string]bool {
@@ -544,9 +544,9 @@ func DefaultConfiguration() Configuration {
 		ViewLayoutContextKey:              "ion.viewLayout",
 		ViewDataContextKey:                "ion.viewData",
 		RemoteAddrHeaders: map[string]bool{
-			"X-Real-Ip":             false,
-			"X-Forwarded-For":       false,
-			"HTTP_CF_CONNECTING_IP": false,
+			"X-Real-Ip":        false,
+			"X-Forwarded-For":  false,
+			"CF-Connecting-IP": false,
 		},
 		Other: make(map[string]interface{}, 0),
 	}

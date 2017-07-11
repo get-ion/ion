@@ -67,11 +67,11 @@ It doesn't always contain the "best ways" but it does cover each important featu
 
 | Engine | Declaration |
 | -----------|-------------|
-| template/html | `view.HTML(...)`       |
-| django        | `view.Django(...)`     |
-| handlebars    | `view.Handlebars(...)` |
-| amber         | `view.Amber(...)`      |
-| pug(jade)     | `view.Pug(...)`        |
+| template/html | `ion.HTML(...)`       |
+| django        | `ion.Django(...)`     |
+| handlebars    | `ion.Handlebars(...)` |
+| amber         | `ion.Amber(...)`      |
+| pug(jade)     | `ion.Pug(...)`        |
 
 - [Overview](view/overview/main.go)
 - [Hi](view/template_html_0/main.go)

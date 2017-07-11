@@ -182,6 +182,12 @@ func (app *Application) View(writer io.Writer, filename string, layout string, b
 	return err
 }
 
+// LimitRequestBodySize is a middleware which sets a request body size limit
+// for all next handlers in the chain.
+//
+// A shortcut for context#LimitRequestBodySize.
+var LimitRequestBodySize = context.LimitRequestBodySize
+
 // SPA  accepts an "assetHandler" which can be the result of an
 // app.StaticHandler or app.StaticEmbeddedHandler.
 // It wraps the router and checks:
@@ -408,7 +414,7 @@ var ErrServerClosed = http.ErrServerClosed
 // then create a new host and run it manually by `go NewHost(*http.Server).Serve/ListenAndServe` etc...
 // or use an already created host:
 // h := NewHost(*http.Server)
-// Run(Raw(h.ListenAndServe), WithCharset("UTF-8"), WithRemoteAddrHeader("HTTP_CF_CONNECTING_IP"))
+// Run(Raw(h.ListenAndServe), WithCharset("UTF-8"), WithRemoteAddrHeader("CF-Connecting-IP"))
 //
 // The Application can go online with any type of server or ion's host with the help of
 // the following runners:

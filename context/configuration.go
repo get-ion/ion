@@ -74,7 +74,7 @@ type ConfigurationReadOnly interface {
 	// Defaults to:
 	// "X-Real-Ip":             true,
 	// "X-Forwarded-For":       true,
-	// "HTTP_CF_CONNECTING_IP": false
+	// "CF-Connecting-IP": false
 	//
 	// Look `context.RemoteAddr()` for more.
 	GetRemoteAddrHeaders() map[string]bool
