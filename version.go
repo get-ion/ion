@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	versionURL = "https://github.com/get-ion/ion/blob/master/VERSION"
-	updateCmd  = "go get -u github.com/get-ion/ion"
+	versionURL = "https://raw.githubusercontent.com/get-ion/ion/master/VERSION"
+	updateCmd  = "go get -u -v -f github.com/get-ion/ion"
 )
 
 var checkVersionOnce = sync.Once{}
@@ -73,7 +73,6 @@ func checkVersion() {
 		changelogURL   string
 	)
 
-	// 8.2.1:https://github.com/get-ion/ion/blob/master/HISTORY.md#tu-08-august-2017--v821
 	if idx := strings.IndexByte(fetchedVersion, ':'); idx > 0 {
 		changelogURL = fetchedVersion[idx+1:]
 		fetchedVersion = fetchedVersion[0:idx]
@@ -145,6 +144,6 @@ func checkVersion() {
 			golog.Warnf("unexpected message while trying to go get: %v", err)
 			return
 		}
-		golog.Infof("Update process finished, current version: %s. Please re-start manually your Application.\n", latestVersion.String())
+		golog.Infof("Update process finished, current version: %s.\nManual app restart is required.\n", latestVersion.String())
 	}
 }

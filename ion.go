@@ -530,7 +530,7 @@ func (app *Application) Run(serve Runner, withOrWithout ...Configurator) error {
 
 	app.Configure(withOrWithout...)
 
-	if !app.config.DisableVersionCheck {
+	if !app.config.DisableVersionCheck && app.logger.Printer.IsTerminal {
 		go CheckVersion()
 	}
 
