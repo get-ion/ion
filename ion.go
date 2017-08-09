@@ -530,6 +530,10 @@ func (app *Application) Run(serve Runner, withOrWithout ...Configurator) error {
 
 	app.Configure(withOrWithout...)
 
+	if !app.config.DisableVersionCheck {
+		go CheckVersion()
+	}
+
 	// this will block until an error(unless supervisor's DeferFlow called from a Task).
 	err := serve(app)
 	if err != nil {
